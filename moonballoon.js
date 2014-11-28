@@ -3,34 +3,34 @@ Coordinates = new Meteor.Collection("coordinates");
 if (Meteor.isClient) {
   Meteor.startup(function () {
     Meteor.subscribe('json-coordinates');
-    console.log(Coordinates.findOne().timestamp);
+    var query = Coordinates.find();
+    var handle = query.observeChanges({
+      added: function(id, fields) {
+        console.log(id, fields);
+        positionBallon(id);
+      },
+      changed: function (id, fields) {
+        positionBallon(id);
+      }
+    });
+    console.log(query, Coordinates.findOne({},{sort:{timestamp:-1}}));
   });
 
-  /*google.load("earth", "1");
-
-  var ge = null;
-
-  function gEarthInit() {
-    google.earth.createInstance("map3d", initCallback, failureCallback);
+  function positionBallon(id){
+    console.log('positioning balloon', id);
+    var lastAlt = Coordinates.findOne(id).timestamp;
+    $('input[type=range]').val(lastAlt/40000*100);
+    $('.chosen-height span').text(lastAlt);
   }
-
-  function initCallback(object) {
-    ge = object;
-    ge.getWindow().setVisibility(true);
-  }
-
-  function failureCallback(object) {
-    console.log('failureCallback');
-  }
-
-  Template.location.rendered = function(){
-    //gEarthInit();
-    Session.set('earth', true);
-  };*/
 
   Template.location.helpers({
     coords: function(){
       return Coordinates.find();
+    },
+    stats: function(){
+      var log = this;
+      var result = moment(log.timestamp).fromNow() + ', ' + log.alt;
+      return result;
     }
   });
 
@@ -44,39 +44,35 @@ if (Meteor.isClient) {
   });
 }
 
+Log = new Meteor.Collection('log');
+
 if (Meteor.isServer) {
   Meteor.publish('json-coordinates', function(id){
-    var self = this;
-    var initializing = true;
-    var handle = Coordinates.find().observeChanges({
-      added: function(doc, idx){
-        if(!initializing)
-         self.changed('json-coordinates', id, {timestamp: when});
-      },
-      removed: function(doc, idx){
-        self.changed('json-coordinates', id, {timestamp: when});
-      }
-    });
-    initializing = false;
-    self.added('json-coordinates', id, {timestamp: when});
-    self.ready();
-    self.onStop(function(){
-      handle.stop();
-    });
+    return Coordinates.find();
+  });
+  Meteor.publish('logs', function(){
+    return Log.find();
   });
 
   Meteor.startup(function () {
     var json = HTTP.get('http://moonballoon.azurewebsites.net/get/position');
-    var data = JSON.parse(Assets.getText("m00nballoon.json"));
+    //var data = JSON.parse(Assets.getText("m00nballoon.json"));
     //Coordinates.remove({});
-    if(Coordinates.find().count() === 0) {
+    if(Log.find().count() === 0) {
       for (var i = 0; i < json.length; i++) {
+        Log.insert({
+          lat: json[i].Lat,
+          lng: json[i].Lon,
+          alt: json[i].Alt,
+          pic: 'http://az695307.vo.msecnd.net/mycontainer/'+json[i].PhotoName,
+          timestamp: json[i].When
+        });
         Coordinates.insert({
-          lat: data[i].Lat,
-          lng: data[i].Lon,
-          alt: data[i].Alt,
-          pic: 'http://az695307.vo.msecnd.net/mycontainer/'+data[i].PhotoName,
-          timestamp: data[i].When
+          lat: json[i].Lat,
+          lng: json[i].Lon,
+          alt: json[i].Alt,
+          pic: 'http://az695307.vo.msecnd.net/mycontainer/'+json[i].PhotoName,
+          timestamp: json[i].When
         });
       }
     }
