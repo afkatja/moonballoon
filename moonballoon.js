@@ -13,7 +13,7 @@ if (Meteor.isClient) {
         positionBallon(id);
       }
     });
-    console.log(query, Coordinates.findOne({},{sort:{timestamp:-1}}));
+    console.log(query, Coordinates.findOne());
   });
 
   function positionBallon(id){
@@ -48,7 +48,7 @@ Log = new Meteor.Collection('log');
 
 if (Meteor.isServer) {
   Meteor.publish('json-coordinates', function(id){
-    return Coordinates.find();
+    return Coordinates.find({},{sort:{timestamp:-1},limit:1});
   });
   Meteor.publish('logs', function(){
     return Log.find();
@@ -57,8 +57,9 @@ if (Meteor.isServer) {
   Meteor.startup(function () {
     var json = HTTP.get('http://moonballoon.azurewebsites.net/get/position');
     //var data = JSON.parse(Assets.getText("m00nballoon.json"));
-    //Coordinates.remove({});
-    if(Log.find().count() === 0) {
+    Log.remove();
+    Coordinates.remove();
+    if(Coordinates.find().count() === 0) {
       for (var i = 0; i < json.length; i++) {
         Log.insert({
           lat: json[i].Lat,
