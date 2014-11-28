@@ -1,0 +1,26 @@
+[
+  {
+    "pic": "http://lorempixel.com/output/abstract-q-c-640-480-2.jpg",
+    "alt": 100,
+    "lng": 6.54,
+    "lat": 52.13,
+    "timestamp": "11/28/2014 11:47:25",
+    "_id": "id1"
+  },
+  {
+    "pic": "http://lorempixel.com/output/abstract-q-c-640-480-4.jpg",
+    "alt": 120,
+    "lng": 4.3229616,
+    "lat": 52.0690747,
+    "timestamp": "11/28/2014 12:47:20",
+    "_id": "id2"
+  },
+  {
+    "pic": "http://lorempixel.com/output/abstract-q-c-640-480-8.jpg",
+    "alt": 140,
+    "lng": 4.3229616,
+    "lat": 52.0690747,
+    "timestamp": "11/28/2014 12:57:25",
+    "_id": "id3"
+  }
+]
