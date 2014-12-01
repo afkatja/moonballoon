@@ -1,7 +1,6 @@
 
 <head>
-  <title>Moonballoon</title>
-  <!--<script src="http://www.google.com/jsapi?key=AIzaSyAT4uJ8MsM-dWLRninrKeLjDj0q9rTjEXc"></script>-->
+  <title>M00nballoon</title>
   <link rel="stylesheet" href="moonballoon.css" type="text/css" />
 </head>
 
@@ -11,7 +10,7 @@
       <a href="/" class="moonballoon-logo">Moonballoon</a>
     </header>
     {{> location}}
-    <footer class="earth">
+    <!-- <footer class="earth">
       <svg width="100%" height="50px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
         <defs>
           <lineargradient id="earth" x1="0" x2="0" y1="0" y2="1">
@@ -21,12 +20,13 @@
         </defs>
         <ellipse id="mask" cx="50%" cy="160" rx="559" ry="155.5" width="100%"></ellipse>
     </svg>
-    </footer>
+    </footer> -->
   </section>
 </body>
 
 <template name="location">
-  <div class="graph">
+  {{> map}}
+  <!-- <div class="graph">
     <span class="min">0 m</span>
     <p class="slider-input">
       <input type="range" min="0" max="100" value="0" class="slider" />
@@ -36,9 +36,26 @@
     {{#each coords}}
       {{> coord}}
     {{/each}}
-  </div>
+  </div> -->
+
+  <figure class="gallery">
+    {{#each stats}}
+      {{> pic}}
+    {{/each}}
+  </figure>
 </template>
 
 <template name="coord">
-  <p id="{{_id}}">Altitude of {{timestamp}}: {{alt}}. LatLng: {{lat}} {{lng}}</p>
+  <figcaption id="{{_id}}">Tijd: <i>{{timestamp}}</i> Altitude: <b>{{alt}}</b>. LatLng: <b>{{lat}}</b> <b>{{lng}}</b></figcaption>
+</template>
+
+<template name="pic">
+  <div data-src="{{pic}}">
+    <img src="{{pic}}" />
+    {{> coord}}
+  </div>
+</template>
+
+<template name="map">
+  <div id="map">{{maps}}</div>
 </template>

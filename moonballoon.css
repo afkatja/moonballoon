@@ -41,7 +41,7 @@ header {
   flex-direction: column;
   height: 100vh;
   width: 100%;
-  background-image: linear-gradient(-1deg, #ADDFED 0%, #5DA4D8 40%, #530A99 78%, #0B152E 100%);
+  /*background-image: linear-gradient(-1deg, #ADDFED 0%, #5DA4D8 40%, #530A99 78%, #0B152E 100%);*/
   background-size: cover;
   background-repeat: no-repeat;
 }
@@ -131,13 +131,40 @@ input[type="range"]:focus {
   outline: none;
   cursor: pointer;
 }
+#map {
+  width: 100%;
+  min-height: 600px;
+  margin-top: 17vh;
+}
 .earth {
   height: 5vh;
   width: 100%;
   margin-top: auto;
   -webkit-filter: drop-shadow(0px 0px 38px #FFFFFF);
 }
-
+.gallery {
+  width: 100%;
+  margin: 0;
+}
+.gallery div {
+  position: relative;
+}
+.gallery div[data-src*=null] {
+  height: 0;
+}
+.gallery figcaption {
+  position: absolute;
+  bottom: 10px;
+  color: #fff;
+  text-shadow: 0 0 1px #000;
+}
+.gallery img {
+  max-width: 100%;
+}
+.gallery img[src*=null] { width: 0; }
+.gallery img[src*=null] + figcaption {
+  display: none;
+}
 .earth #mask {
   fill: url(#earth);
 }
