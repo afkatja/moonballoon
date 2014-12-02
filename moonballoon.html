@@ -50,10 +50,12 @@
 </template>
 
 <template name="pic">
+  {{#if filterAlt}}
   <div data-src="{{pic}}">
     <img src="{{pic}}" />
     {{> coord}}
   </div>
+  {{/if}}
 </template>
 
 <template name="map">

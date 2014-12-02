@@ -3,7 +3,7 @@ Coordinates = new Meteor.Collection("coordinates");
 if (Meteor.isClient) {
   Meteor.startup(function () {
     Meteor.subscribe('json-coordinates');
-    var query = Coordinates.find();
+    /*var query = Coordinates.find();
     var handle = query.observeChanges({
       added: function(id, fields) {
         console.log(id, fields);
@@ -12,7 +12,7 @@ if (Meteor.isClient) {
       changed: function (id, fields) {
         positionBallon(id);
       }
-    });
+    });*/
 
     Meteor.subscribe('logs');
     var handle = Log.find().observeChanges({
@@ -46,8 +46,9 @@ if (Meteor.isClient) {
     if (!window.markers) {
       window.markers = [];
     }
-    var lastLog = Log.findOne(id);
+    var lastLog = Log.findOne({_id: id, alt: {$gt: 0}});
     console.log('will place marker', id, lastLog);
+    if(!lastLog || lastLog.alt <= 0) return;
     if (window.markers[id]) {
       var marker = window.markers[id];
       marker.setPosition({ lat: lastLog.lat, lng: lastLog.lng });
@@ -71,20 +72,23 @@ if (Meteor.isClient) {
 
   Template.location.helpers({
     coords: function(){
-      return Coordinates.find();
+      return Coordinates.find({}, {alt: {$gt: 0}});
     },
     stats: function(){
       var log = this;
       var result = moment(log.timestamp).fromNow() + ', ' + log.alt + ', '+ log.pic;
-      return Log.find({}, {sort: {timestamp: -1}});
+      return Log.find({}, {alt: {$gt: 0}, sort: {timestamp: -1}});
     },
     maps: function(){
-      return Coordinates.findOne();
+      return Coordinates.findOne({alt: {$gt: 0}});
     }
   });
 
+  Template.pic.filterAlt = function(){
+    return this.alt > 0;
+  };
+
   Template.location.rendered = function(){
-    console.log('initializing maps', this);
     GoogleMaps.init({},
       function(){
         var mapOptions = {
